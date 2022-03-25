@@ -7,6 +7,7 @@ Feel free to use and/or modify them to help you develop your program.
 """
 
 from itertools import islice
+import math
 
 def apply_ansi(str, bold=True, color=None):
     """
@@ -146,3 +147,30 @@ def print_board(n, board_dict, message="", ansi=False, **kwargs):
 
     # Print to terminal (with optional args forwarded)
     print(output, **kwargs)
+
+def heuristic(current, goal):
+    distance = abs(math.sqrt(((current[0] - goal[0])**2) + ((current[1] - goal[1])**2)))
+
+    return distance
+
+def valid_adjacent_moves(current, size):
+    adj_nodes = generated_adj_nodes(current)
+    valid_adj_nodes = []
+
+    for x, y in adj_nodes:
+        if not ((x >= size) or (y >= size) or (x < 0) or (y < 0)):
+            valid_adj_nodes.append([x, y])
+
+    return valid_adj_nodes
+                
+
+def generated_adj_nodes(current):
+    adj_nodes = []
+    for y in [-1, 0, 1]:
+        for x in [-1, 0, 1]:
+            if y == x:
+                continue
+            else:
+                adj_nodes.append([current[1] + y, current[0] + x])
+
+    return adj_nodes
