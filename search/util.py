@@ -6,8 +6,11 @@ This module contains some helper functions for printing actions and boards.
 Feel free to use and/or modify them to help you develop your program.
 """
 
+from asyncio.windows_events import NULL
 from itertools import islice
 import math
+UNIT_COST = 1
+
 
 def apply_ansi(str, bold=True, color=None):
     """
@@ -153,11 +156,12 @@ def heuristic(current, goal):
 
     return distance
 
-def valid_adjacent_moves(current, size):
+def valid_adjacent_nodes(current, size):
     adj_nodes = generated_adj_nodes(current)
     valid_adj_nodes = []
 
-    for x, y in adj_nodes:
+    for node in adj_nodes:
+        x,y = node[0], node[1]
         if not ((x >= size) or (y >= size) or (x < 0) or (y < 0)):
             valid_adj_nodes.append([x, y])
 
@@ -171,6 +175,38 @@ def generated_adj_nodes(current):
             if y == x:
                 continue
             else:
-                adj_nodes.append([current[1] + y, current[0] + x])
+                node = []
+                node.append(current[0]+x)
+                node.append(current[1]+y)
+                adj_nodes.append(node)
 
+    # print(adj_nodes)
     return adj_nodes
+
+
+def min_distance_node(current, node_goal, size):
+    min_distance = 999999999 #replace with max limit
+    valid_nodes = valid_adjacent_nodes(current, size)
+    node = NULL
+    closest_node = NULL
+
+    if len(valid_nodes) == 0:
+        return NULL,NULL
+    
+    # generates all the nodes, finds the node closest to the goal
+    for node in valid_nodes:
+        goal_distance = UNIT_COST + heuristic(node, node_goal)
+        
+        # the next closest node is the goal
+        if (goal_distance == UNIT_COST): return node, []
+
+        #finding min distance
+        if (goal_distance < min_distance):
+            min_distance = goal_distance
+            closest_node = node
+            
+    # removes the closest node from the list, hence have the other open nodes to append
+    valid_nodes.remove(closest_node)
+
+    return closest_node, valid_nodes
+
