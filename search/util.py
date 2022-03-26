@@ -153,7 +153,6 @@ def print_board(n, board_dict, message="", ansi=False, **kwargs):
 
 def heuristic(current, goal):
     distance = abs(math.sqrt(((current[0] - goal[0])**2) + ((current[1] - goal[1])**2)))
-
     return distance
 
 def valid_adjacent_nodes(current, size):
@@ -196,6 +195,7 @@ def min_distance_node(current, node_goal, size):
     # generates all the nodes, finds the node closest to the goal
     for node in valid_nodes:
         goal_distance = UNIT_COST + heuristic(node, node_goal)
+        print(str(node) + ":"  + str(goal_distance))
         
         # the next closest node is the goal
         if (goal_distance == UNIT_COST): return node, []
