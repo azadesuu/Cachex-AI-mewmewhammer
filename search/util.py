@@ -156,15 +156,16 @@ def heuristic(current, goal):
 
     return distance
 
-def valid_adjacent_nodes(current, size):
+def valid_adjacent_nodes(current, size, blocks):
     adj_nodes = generated_adj_nodes(current)
     valid_adj_nodes = []
 
     for node in adj_nodes:
-        x,y = node[0], node[1]
-        if not ((x >= size) or (y >= size) or (x < 0) or (y < 0)):
-            valid_adj_nodes.append([x, y])
-
+        if node not in blocks:
+            x,y = node[0], node[1]
+            if not ((x >= size) or (y >= size) or (x < 0) or (y < 0)):
+                valid_adj_nodes.append([x, y])
+    print("VALID: " + str(valid_adj_nodes))
     return valid_adj_nodes
                 
 
@@ -180,13 +181,13 @@ def generated_adj_nodes(current):
                 node.append(current[1]+y)
                 adj_nodes.append(node)
 
-    # print(adj_nodes)
+    print(adj_nodes)
     return adj_nodes
 
 
-def min_distance_node(current, node_goal, size):
+def min_distance_node(current, node_goal, size, blocks):
     min_distance = 999999999 #replace with max limit
-    valid_nodes = valid_adjacent_nodes(current, size)
+    valid_nodes = valid_adjacent_nodes(current, size, blocks)
     node = NULL
     closest_node = NULL
 

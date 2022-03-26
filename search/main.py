@@ -32,7 +32,10 @@ def main():
     # usage information).
 
     board_size = data["n"]
-    blocks = data["board"]
+    blocks = []
+    for block_nodes in data["board"]:
+        blocks.append(block_nodes[1:3])
+    
     node_start = data["start"]
     node_goal = data["goal"]
 
@@ -43,7 +46,7 @@ def main():
     open_nodes.append(node_start)
     while len(open_nodes) > 0:
         print("popped node:" + str(open_nodes[-1]))
-        closest_node, new_open_nodes = min_distance_node(open_nodes.pop(), node_goal, board_size)
+        closest_node, new_open_nodes = min_distance_node(open_nodes.pop(), node_goal, board_size, blocks)
         print("cl node: " + str(closest_node))
         
         if (closest_node == node_goal): 
@@ -64,8 +67,8 @@ def main():
         open_nodes.append(closest_node)
 
 
-    print(str(len(goal_path)) + "\n")
+    print(str(len(goal_path)))
     for coor in goal_path:
-        print(f"({coor[0]},{coor[1]})\n")
+        print(f"({coor[0]},{coor[1]})")
         
     #finished
