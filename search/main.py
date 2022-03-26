@@ -38,7 +38,7 @@ def main():
 
     open_nodes = []
     close_nodes = [] # need to add blue nodes
-    goal_path = [] 
+    goal_path = [node_start] 
 
     open_nodes.append(node_start)
     while len(open_nodes) > 0:
@@ -60,9 +60,12 @@ def main():
         # print("gp:"+ str(goal_path))
         print("cn:"+ str(close_nodes))
         print("on:"+ str(open_nodes))
+        
+        open_nodes.append(closest_node)
 
 
-    print(len(goal_path) + "\n")
+    print(str(len(goal_path)) + "\n")
     for coor in goal_path:
         print(f"({coor[0]},{coor[1]})\n")
+        
     #finished
