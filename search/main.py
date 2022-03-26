@@ -8,8 +8,10 @@ This script contains the entry point to the program (the code in
 """
 
 from fileinput import close
+from heapq import merge
 import sys
 import json
+from types import new_class
 
 # If you want to separate your code into separate files, put them
 # inside the `search` directory (like this one and `util.py`) and
@@ -35,7 +37,7 @@ def main():
     blocks = []
     for block_nodes in data["board"]:
         blocks.append(block_nodes[1:3])
-    
+
     node_start = data["start"]
     node_goal = data["goal"]
 
@@ -44,28 +46,36 @@ def main():
     goal_path = [node_start] 
 
     open_nodes.append(node_start)
+    for b in blocks:
+        close_nodes.append(b)
+
     while len(open_nodes) > 0:
-        print("popped node:" + str(open_nodes[-1]))
-        closest_node, new_open_nodes = min_distance_node(open_nodes.pop(), node_goal, board_size, blocks)
+        print("    popped node:" + str(open_nodes[-1]))
+        closest_node, new_open_nodes = min_distance_node(open_nodes.pop(), node_goal, board_size, blocks, close_nodes)
         print("cl node: " + str(closest_node))
         
+        print("NEW:" + str(new_open_nodes))
+
         if (closest_node == node_goal): 
             goal_path.append(closest_node)
             break
-        close_nodes.append(closest_node)
+        
+        if closest_node not in close_nodes:
+            close_nodes.append(closest_node)
         
         for node in new_open_nodes:
-            if node not in open_nodes and node not in close_nodes:
+            if (node not in close_nodes) and (node not in open_nodes):
                 open_nodes.append(node)
-        
-        goal_path.append(closest_node)
-        
-        # print("gp:"+ str(goal_path))
-        print("cn:"+ str(close_nodes))
-        print("on:"+ str(open_nodes))
-        
-        open_nodes.append(closest_node)
 
+        goal_path.append(closest_node)
+        # print("GOAL:" + str(goal_path))
+        
+        print("cn:"+ str(close_nodes))
+
+
+        open_nodes.append(closest_node)
+        print("on:"+ str(open_nodes))
+    
 
     print(str(len(goal_path)))
     for coor in goal_path:

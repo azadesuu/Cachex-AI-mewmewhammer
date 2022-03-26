@@ -7,6 +7,7 @@ Feel free to use and/or modify them to help you develop your program.
 """
 
 from asyncio.windows_events import NULL
+from fileinput import close
 from itertools import islice
 import math
 UNIT_COST = 1
@@ -181,11 +182,10 @@ def generated_adj_nodes(current):
                 node.append(current[1]+y)
                 adj_nodes.append(node)
 
-    print(adj_nodes)
     return adj_nodes
 
 
-def min_distance_node(current, node_goal, size, blocks):
+def min_distance_node(current, node_goal, size, blocks, close_nodes):
     min_distance = 999999999 #replace with max limit
     valid_nodes = valid_adjacent_nodes(current, size, blocks)
     node = NULL
@@ -196,16 +196,23 @@ def min_distance_node(current, node_goal, size, blocks):
     
     # generates all the nodes, finds the node closest to the goal
     for node in valid_nodes:
-        goal_distance = UNIT_COST + heuristic(node, node_goal)
+        if node in close_nodes:
+            valid_nodes.remove(node)
+        else:
+            print("NODE: " + str(node))
+            goal_distance = UNIT_COST + heuristic(node, node_goal)
         
-        # the next closest node is the goal
-        if (goal_distance == UNIT_COST): return node, []
+            # the next closest node is the goal
+            if (goal_distance == UNIT_COST): return node, []
 
-        #finding min distance
-        if (goal_distance < min_distance):
-            min_distance = goal_distance
-            closest_node = node
+            #finding min distance
+            if (goal_distance < min_distance):
+                min_distance = goal_distance
+                closest_node = node
+
             
+ 
+
     # removes the closest node from the list, hence have the other open nodes to append
     valid_nodes.remove(closest_node)
 
