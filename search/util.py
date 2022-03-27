@@ -157,6 +157,7 @@ def heuristic(current, goal):
 
     return distance
 
+#checks for nodes adjacent to the current node, and returns the valid ones
 def valid_adjacent_nodes(current, size, blocks):
     adj_nodes = generated_adj_nodes(current)
     valid_adj_nodes = []
@@ -170,6 +171,7 @@ def valid_adjacent_nodes(current, size, blocks):
     return valid_adj_nodes
                 
 
+# generates a list of all adjacent nodes
 def generated_adj_nodes(current):
     adj_nodes = []
     for y in [-1, 0, 1]:
@@ -218,3 +220,14 @@ def min_distance_node(current, node_goal, size, blocks, close_nodes):
 
     return closest_node, valid_nodes
 
+def find_print_path(start:tuple, goal:tuple, came_from:dict):
+    goal_path = list()
+    curr_node = goal
+    while (curr_node is not start):
+        goal_path.insert(0, curr_node)
+        curr_node = came_from[curr_node] 
+    
+    print(str(len(goal_path)))
+    for coor in goal_path:
+        print(f"({coor[0]},{coor[1]})")
+        
