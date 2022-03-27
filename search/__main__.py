@@ -1,5 +1,5 @@
 from main import main
-from main_new import main_new
+from main_new import main_new as main2
 
 main()
-main_new()
+main2()
