@@ -5,7 +5,7 @@ import sys
 import json
 from types import new_class
 from typing import Dict, Tuple, List
-from search.util import valid_adjacent_nodes
+from util import valid_adjacent_nodes
 from typing import TypeVar, Generic
 
 # If you want to separate your code into separate files, put them
