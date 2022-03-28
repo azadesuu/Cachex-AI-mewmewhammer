@@ -153,7 +153,11 @@ def print_board(n, board_dict, message="", ansi=False, **kwargs):
     print(output, **kwargs)
 
 def heuristic(current, goal):
-    distance = abs(math.sqrt(((current[0] - goal[0])**2) + ((current[1] - goal[1])**2)))
+    print(current)
+    print(goal)
+    x = ((current[0] - goal[0])**2)
+    y = ((current[1] - goal[1])**2)
+    distance = abs(math.sqrt(x+y))
 
     return distance
 
@@ -187,38 +191,35 @@ def generated_adj_nodes(current):
     return adj_nodes
 
 
-def min_distance_node(current, node_goal, size, blocks, close_nodes):
-    min_distance = 999999999 #replace with max limit
-    valid_nodes = valid_adjacent_nodes(current, size, blocks)
-    node = NULL
-    closest_node = NULL
+# def min_distance_node(current, node_goal, size, blocks, close_nodes):
+#     min_distance = 999999999 #replace with max limit
+#     valid_nodes = valid_adjacent_nodes(current, size, blocks)
+#     node = NULL
+#     closest_node = NULL
 
-    if len(valid_nodes) == 0:
-        return NULL,NULL
+#     if len(valid_nodes) == 0:
+#         return NULL,NULL
     
-    # generates all the nodes, finds the node closest to the goal
-    for node in valid_nodes:
-        if node in close_nodes:
-            valid_nodes.remove(node)
-        else:
-            print("NODE: " + str(node))
-            goal_distance = UNIT_COST + heuristic(node, node_goal)
+#     # generates all the nodes, finds the node closest to the goal
+#     for node in valid_nodes:
+#         if node in close_nodes:
+#             valid_nodes.remove(node)
+#         else:
+#             print("NODE: " + str(node))
+#             goal_distance = UNIT_COST + heuristic(node, node_goal)
         
-            # the next closest node is the goal
-            if (goal_distance == UNIT_COST): return node, []
+#             # the next closest node is the goal
+#             if (goal_distance == UNIT_COST): return node, []
 
-            #finding min distance
-            if (goal_distance < min_distance):
-                min_distance = goal_distance
-                closest_node = node
+#             #finding min distance
+#             if (goal_distance < min_distance):
+#                 min_distance = goal_distance
+#                 closest_node = node
+                
+#     # removes the closest node from the list, hence have the other open nodes to append
+#     valid_nodes.remove(closest_node)
 
-            
- 
-
-    # removes the closest node from the list, hence have the other open nodes to append
-    valid_nodes.remove(closest_node)
-
-    return closest_node, valid_nodes
+#     return closest_node, valid_nodes
 
 def find_print_path(start:tuple, goal:tuple, came_from:dict):
     goal_path = list()
@@ -226,7 +227,8 @@ def find_print_path(start:tuple, goal:tuple, came_from:dict):
     while (curr_node is not start):
         goal_path.insert(0, curr_node)
         curr_node = came_from[curr_node] 
-    
+    goal_path.insert(0, curr_node)
+
     print(str(len(goal_path)))
     for coor in goal_path:
         print(f"({coor[0]},{coor[1]})")
