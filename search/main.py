@@ -14,9 +14,10 @@ from typing import TypeVar, Generic
 from util import print_board, print_coordinate, heuristic, generated_adj_nodes,  find_print_path, UNIT_COST, valid_adjacent_nodes
 
 
+#priority queue class
 T = TypeVar('T')
-class PriorityQueue():
-
+class PriorityQueue:
+    
     #initialises the contents of the queue
     def __init__(self):
         self.elements: List[Tuple[float, T]] = []
@@ -33,6 +34,16 @@ class PriorityQueue():
     def get(self) ->  T:
         return heapq.heappop(self.elements)[1]
 
+#board class, getattr(object, 'attribute')
+class Board:
+    def __init__(self, data):
+        self.size = data["n"]
+        self.start = data["start"]
+        self.goal = data["goal"]
+        self.blocks = []
+        for block_nodes in data["board"]:
+            self.blocks.append(block_nodes[1:3])
+    
 def main():
     ###################################IMPORTING DATA#########################################
     try:
@@ -42,15 +53,13 @@ def main():
         print("usage: python3 -m search path/to/input.json", file=sys.stderr)
         sys.exit(1)
     
+    board = Board(data)
     # board dimensions
-    board_size = data["n"]
-    #putting in closed nodes (cannot be visited)
-    blocks = []
-    for block_nodes in data["board"]:
-        blocks.append(block_nodes[1:3])
+    board_size = getattr(board, 'size')
+    blocks = getattr(board, 'blocks')
+    node_start = tuple(getattr(board, 'blocks'))
+    node_goal = tuple(getattr(board, 'goal'))
 
-    node_start = tuple(data["start"])
-    node_goal = tuple(data["goal"])
     ############################################################################################
     pathfinding(node_start, node_goal, blocks, board_size)
 
