@@ -153,8 +153,7 @@ def print_board(n, board_dict, message="", ansi=False, **kwargs):
     print(output, **kwargs)
 
 def heuristic(current, goal):
-    print(current)
-    print(goal)
+
     x = ((current[0] - goal[0])**2)
     y = ((current[1] - goal[1])**2)
     distance = abs(math.sqrt(x+y))
@@ -171,7 +170,7 @@ def valid_adjacent_nodes(current, size, blocks):
             x,y = node[0], node[1]
             if not ((x >= size) or (y >= size) or (x < 0) or (y < 0)):
                 valid_adj_nodes.append([x, y])
-    print("VALID: " + str(valid_adj_nodes))
+
     return valid_adj_nodes
                 
 
