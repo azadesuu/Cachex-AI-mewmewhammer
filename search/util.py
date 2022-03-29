@@ -169,9 +169,8 @@ def valid_adjacent_nodes(current, size, blocks):
             x,y = node[0], node[1]
             if not ((x >= size) or (y >= size) or (x < 0) or (y < 0)):
                 valid_adj_nodes.append([x, y])
-    # print("VALID: " + str(valid_adj_nodes))
     return valid_adj_nodes
-                
+
 
 # generates a list of all adjacent nodes
 def generated_adj_nodes(current):
