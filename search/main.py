@@ -22,13 +22,9 @@ def main():
     
     board = Board(data)
     # board dimensions
-    board_size = getattr(board, 'size')
-    blocks = getattr(board, 'blocks')
-    node_start = tuple(getattr(board, 'blocks'))
-    node_goal = tuple(getattr(board, 'goal'))
 
     ############################################################################################
-    pathfinding(node_start, node_goal, blocks, board_size)
+    pathfinding(board)
     file.close()
 
 

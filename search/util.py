@@ -10,7 +10,7 @@ from asyncio.windows_events import NULL
 from itertools import islice
 
 import math
-from classes import PriorityQueue
+from classes import PriorityQueue, Board, Nodes
 from typing import List, Dict, Tuple
 UNIT_COST = 1
 
@@ -154,6 +154,7 @@ def print_board(n, board_dict, message="", ansi=False, **kwargs):
     # Print to terminal (with optional args forwarded)
     print(output, **kwargs)
 
+# heuristics, the cost of from the current node to goal
 def distance_to_goal(current, goal):
     x = ((current[0] - goal[0])**2)
     y = ((current[1] - goal[1])**2)
@@ -190,24 +191,26 @@ def generated_adj_nodes(current):
     return adj_nodes
 
 
-def pathfinding(start: tuple, goal: tuple, blocks: List[List], size: int):
+def pathfinding(board: Board):
+    
     frontier = PriorityQueue() # orders the valid adjacent nodes by priority
-    frontier.put(start, 0)     # entering the first node
     ###################################INITIALISING DATA########################################
-    # stores the previous location of a given location tuple
-    came_from: Dict[Tuple, Tuple] = dict()
-    # stores the cost of a given location
-    cost_so_far: Dict[Tuple, int] = dict()
+    size = board.size
+    blocks = board.blocks
+    start = board.start
+    goal = board.goal
+    
+    # entering the first node
+    frontier.put(start, 0)     
     #initialising values for the starting nodes
-    came_from[start] = NULL
-    cost_so_far[start] = 0
-    ############################################################################################
+    board.nodes.came_from[start] = NULL
+    board.nodes.cost_so_far[start] = 0
     #initialising blocks
     for block in blocks:
-        key = tuple(block)
-        came_from[key] = NULL
-        cost_so_far[key]  = 0
-
+        board.nodes.came_from[block] = NULL
+        board.nodes.cost_so_far[block]  = 0
+    ############################################################################################
+    # start pathfinding
     found = False
     while not frontier.empty():
         current = frontier.get()
@@ -223,47 +226,18 @@ def pathfinding(start: tuple, goal: tuple, blocks: List[List], size: int):
             new_cost = UNIT_COST + distance_to_goal(t_next_node, goal)
             # if the next node found is has no cost, or the new_cost is less than the current cost
             # record the new (lower) cost into the dictionary
-            if t_next_node not in cost_so_far.keys() or new_cost < cost_so_far[t_next_node]:
-                cost_so_far[t_next_node] = new_cost
+            if t_next_node not in board.nodes.cost_so_far.keys() or new_cost < board.nodes.cost_so_far[t_next_node]:
+                board.nodes.cost_so_far[t_next_node] = new_cost
                 priority = new_cost
                 
                 frontier.put(t_next_node, priority)
-                came_from[t_next_node] = current
+                board.nodes.came_from[t_next_node] = current
 
-    if ((frontier.empty()) and (goal not in came_from.keys())) or (not found):
+    if ((frontier.empty()) and (goal not in board.nodes.came_from.keys())) or (not found):
         print("goal not found")
         exit(-1)    
     else:
-        find_print_path(start, goal, came_from)
-# def min_distance_node(current, node_goal, size, blocks, close_nodes):
-#     min_distance = 999999999 #replace with max limit
-#     valid_nodes = valid_adjacent_nodes(current, size, blocks)
-#     node = NULL
-#     closest_node = NULL
-
-#     if len(valid_nodes) == 0:
-#         return NULL,NULL
-    
-#     # generates all the nodes, finds the node closest to the goal
-#     for node in valid_nodes:
-#         if node in close_nodes:
-#             valid_nodes.remove(node)
-#         else:
-#             print("NODE: " + str(node))
-#             goal_distance = UNIT_COST + heuristic(node, node_goal)
-        
-#             # the next closest node is the goal
-#             if (goal_distance == UNIT_COST): return node, []
-
-#             #finding min distance
-#             if (goal_distance < min_distance):
-#                 min_distance = goal_distance
-#                 closest_node = node
-                
-#     # removes the closest node from the list, hence have the other open nodes to append
-#     valid_nodes.remove(closest_node)
-
-#     return closest_node, valid_nodes
+        find_print_path(start, goal, board.nodes.came_from)
 
 def find_print_path(start:tuple, goal:tuple, came_from:dict):
     goal_path = list()
@@ -273,7 +247,7 @@ def find_print_path(start:tuple, goal:tuple, came_from:dict):
         curr_node = came_from[curr_node] 
     goal_path.insert(0, curr_node)
 
-    print(str(len(goal_path)))
+    print(len(goal_path))
     for coor in goal_path:
         print(f"({coor[0]},{coor[1]})")
         
