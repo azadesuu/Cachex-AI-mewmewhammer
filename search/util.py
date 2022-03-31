@@ -6,7 +6,6 @@ This module contains some helper functions for printing actions and boards.
 Feel free to use and/or modify them to help you develop your program.
 """
 
-from asyncio.windows_events import NULL
 from itertools import islice
 
 import math
@@ -206,12 +205,12 @@ def pathfinding(board: Board):
     # entering the first node
     priority_queue.put(start, 0)     
     #initialising values for the starting nodes
-    board.nodes.came_from[start] = NULL
+    board.nodes.came_from[start] = None
     board.nodes.cost_so_far[start] = 0
     #initialising blocks
     for block in blocks:
         # the initial blocking nodes have no "origin node" nor cost
-        board.nodes.came_from[block] = NULL
+        board.nodes.came_from[block] = None
         board.nodes.cost_so_far[block]  = 0
     ############################################################################################
     # start pathfinding
