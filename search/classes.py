@@ -51,7 +51,8 @@ class Board:
                         self.blocks.append(block_tuple)
                         continue
                     exit("DataError in Board class: block_nodes (number error)")
-            exit("DataError in Board class: block_nodes (formatting error)")
+            else:
+                exit("DataError in Board class: block_nodes (formatting error)")
     
                 
 
