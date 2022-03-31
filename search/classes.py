@@ -48,7 +48,7 @@ class Board:
             (type(self.goal) is not list) or (type(data["board"]) is not list):
                 exit("DataError in Board class: TypeError during Initialisation")
 
-        #turning lists into tuples
+        # turning lists into tuples for dictionary key reasons
         self.start = tuple(self.start)
         self.goal = tuple(self.goal)
         # range checking for nodes
@@ -69,6 +69,16 @@ class Board:
                 exit("DataError in Board class: block_nodes (formatting error)")
 
         self.nodes = Nodes() 
+        self.goal_path = list()
+
+    def __str__(self):
+        string = ''
+        string += str(len(self.goal_path))
+        for coor in self.goal_path:
+            string += (f"\n({coor[0]},{coor[1]})")
+        return string
+            
+        
 
 
 

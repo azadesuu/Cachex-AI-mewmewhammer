@@ -163,37 +163,40 @@ def distance_to_goal(current, goal):
     return distance
 
 #checks for nodes adjacent to the current node, and returns the valid ones
-def valid_adjacent_nodes(current, size, blocks):
+def valid_adjacent_nodes(current:tuple, board: Board):
+    # generating all adjacent nodes
     adj_nodes = generated_adj_nodes(current)
+    # stores only valid adjacent nodes
     valid_adj_nodes = []
-
     for node in adj_nodes:
-        if node not in blocks:
-            x,y = node[0], node[1]
-            if not ((x >= size) or (y >= size) or (x < 0) or (y < 0)):
-                valid_adj_nodes.append([x, y])
+        if node not in board.blocks:
+            x, y = node[0], node[1]
+            # checking if the numbers are within bounds
+            if not ((x >= board.size) or (y >= board.size) or (x < 0) or (y < 0)):
+                valid_adj_nodes.append(tuple([x, y])) # converting to tuple to use as dictionary key
     return valid_adj_nodes
 
 
 # generates a list of all adjacent nodes
-def generated_adj_nodes(current):
+def generated_adj_nodes(current: tuple):
+    # list to store the adjacent nodes, and the one to be returned
     adj_nodes = []
     for y in [-1, 0, 1]:
         for x in [-1, 0, 1]:
             if y == x:
+                # the adjacent nodes do not include the nodes where x,y+=0, x,y-=1, x,y+=1
                 continue
             else:
                 node = []
                 node.append(current[0]+x)
                 node.append(current[1]+y)
-                adj_nodes.append(node)
-
+                adj_nodes.append(tuple(node)) # converting to tuple to use as dictionary key
     return adj_nodes
 
 
 def pathfinding(board: Board):
-    
-    frontier = PriorityQueue() # orders the valid adjacent nodes by priority
+    # orders the valid adjacent nodes by priority
+    priority_queue = PriorityQueue()
     ###################################INITIALISING DATA########################################
     size = board.size
     blocks = board.blocks
@@ -201,53 +204,57 @@ def pathfinding(board: Board):
     goal = board.goal
     
     # entering the first node
-    frontier.put(start, 0)     
+    priority_queue.put(start, 0)     
     #initialising values for the starting nodes
     board.nodes.came_from[start] = NULL
     board.nodes.cost_so_far[start] = 0
     #initialising blocks
     for block in blocks:
+        # the initial blocking nodes have no "origin node" nor cost
         board.nodes.came_from[block] = NULL
         board.nodes.cost_so_far[block]  = 0
     ############################################################################################
     # start pathfinding
     found = False
-    while not frontier.empty():
-        current = frontier.get()
-        
+    # stops only when there are no longer any nodes to explore
+    while not priority_queue.empty():
+        current = priority_queue.get() # popping the node with highest priority
+        # if the goal node has been retrieved from the queue, the goal has been found
         if current == goal:
             found = True
             break
-        neighbours = valid_adjacent_nodes(current, size, blocks)
-        for next_node in neighbours:
-            t_next_node = tuple(next_node)
 
+        # generating all adjacent nodes
+        neighbours:List[Tuple] = valid_adjacent_nodes(current, board)
+        for next_node in neighbours:
             #cost of next node to goal
-            new_cost = UNIT_COST + distance_to_goal(t_next_node, goal)
+            new_cost:float = UNIT_COST + distance_to_goal(next_node, goal)
             # if the next node found is has no cost, or the new_cost is less than the current cost
             # record the new (lower) cost into the dictionary
-            if t_next_node not in board.nodes.cost_so_far.keys() or new_cost < board.nodes.cost_so_far[t_next_node]:
-                board.nodes.cost_so_far[t_next_node] = new_cost
-                priority = new_cost
-                
-                frontier.put(t_next_node, priority)
-                board.nodes.came_from[t_next_node] = current
+            if next_node not in board.nodes.cost_so_far.keys() or new_cost < board.nodes.cost_so_far[next_node]:
+                board.nodes.cost_so_far[next_node ] = new_cost
+                priority:float = new_cost
+                # placing node into the priority queue
+                priority_queue.put(next_node , priority)
+                board.nodes.came_from[next_node] = current
 
-    if ((frontier.empty()) and (goal not in board.nodes.came_from.keys())) or (not found):
-        print("goal not found")
+    # if all possible nodes have been explored, and the goal has not been found
+    if (not found):
+        print("Goal not found")
         exit(-1)    
     else:
-        find_print_path(start, goal, board.nodes.came_from)
+        # prints the whole path taken to get to the goal
+        find_print_path(board)
 
-def find_print_path(start:tuple, goal:tuple, came_from:dict):
-    goal_path = list()
-    curr_node = goal
-    while (curr_node is not start):
-        goal_path.insert(0, curr_node)
-        curr_node = came_from[curr_node] 
-    goal_path.insert(0, curr_node)
+def find_print_path(board:Board):
+    # getting the reversed path from goal
+    curr_node = board.goal
+    while (curr_node is not board.start):
+        board.goal_path.insert(0, curr_node)
+        curr_node = board.nodes.came_from[curr_node] 
+    
+    # last node retrieved will be the starting node
+    board.goal_path.insert(0, curr_node)
 
-    print(len(goal_path))
-    for coor in goal_path:
-        print(f"({coor[0]},{coor[1]})")
-        
+    # prints the goal path tuples
+    print(board.__str__())

@@ -20,11 +20,13 @@ def main():
         print("usage: python3 -m search path/to/input.json", file=sys.stderr)
         sys.exit(1)
     
-    board = Board(data)
-    # board dimensions
 
     ############################################################################################
+    # creating board object with 
+    board = Board(data)
+    # finding and processing path with function
     pathfinding(board)
+    # closing file
     file.close()
 
 
