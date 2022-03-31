@@ -1,37 +1,11 @@
-from asyncio.windows_events import NULL
-from fileinput import close
-import heapq
 import sys
 import json
-from types import new_class
-from typing import Dict, Tuple, List
 # from search.util import valid_adjacent_nodes
-from typing import TypeVar, Generic
-
 # If you want to separate your code into separate files, put them
 # inside the `search` directory (like this one and `util.py`) and
 # then import from them like this:
-from util import print_board, print_coordinate, heuristic, generated_adj_nodes,  find_print_path, UNIT_COST, valid_adjacent_nodes
-
-
-T = TypeVar('T')
-class PriorityQueue():
-
-    #initialises the contents of the queue
-    def __init__(self):
-        self.elements: List[Tuple[float, T]] = []
-    
-    #checks if the queue is empty
-    def empty(self) -> bool:
-        return not self.elements
-    
-    #puts items into the queue based on its priority
-    def put(self, item: T, priority: float):
-        heapq.heappush(self.elements, (priority, item))
-    
-    #pops the item nearest to the goal that is unvisited
-    def get(self) ->  T:
-        return heapq.heappop(self.elements)[1]
+from util import pathfinding
+from classes import Board
 
 def main():
     ###################################IMPORTING DATA#########################################
@@ -42,17 +16,14 @@ def main():
         print("usage: python3 -m search path/to/input.json", file=sys.stderr)
         sys.exit(1)
     
-    # board dimensions
-    board_size = data["n"]
-    #putting in closed nodes (cannot be visited)
-    blocks = []
-    for block_nodes in data["board"]:
-        blocks.append(block_nodes[1:3])
 
-    node_start = tuple(data["start"])
-    node_goal = tuple(data["goal"])
     ############################################################################################
-    pathfinding(node_start, node_goal, blocks, board_size)
+    # creating board object with 
+    board = Board(data)
+    # finding and processing path with function
+    pathfinding(board)
+    # closing file
+    file.close()
 
 def pathfinding(start: tuple, goal: tuple, blocks: List[List], size: int):
     ###################################INITIALISING DATA########################################
