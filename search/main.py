@@ -69,7 +69,7 @@ def pathfinding(start: tuple, goal: tuple, blocks: List[List], size: int):
     #initialising blocks
     for block in blocks:
         came_from[tuple(block)] = NULL
-        cost_so_far[tuple(block)]  = 0
+        cost_so_far[tuple(block)] = 0
 
     found = False
     while not frontier.empty():
@@ -81,7 +81,7 @@ def pathfinding(start: tuple, goal: tuple, blocks: List[List], size: int):
         neighbours = valid_adjacent_nodes(current, size, blocks)
         for next_node in neighbours:
             t_next_node = tuple(next_node)
-
+            print(t_next_node)
             #cost of next node to goal
             new_cost = UNIT_COST + heuristic(t_next_node, goal)
             # if the next node found is has no cost, or the new_cost is less than the current cost
@@ -98,4 +98,3 @@ def pathfinding(start: tuple, goal: tuple, blocks: List[List], size: int):
         exit(-1)    
     else:
         find_print_path(start, goal, came_from)
-
