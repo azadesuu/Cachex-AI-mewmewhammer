@@ -13,7 +13,6 @@ from classes import PriorityQueue, Board, Nodes
 from typing import List, Dict, Tuple
 UNIT_COST = 1
 
-
 def apply_ansi(str, bold=True, color=None):
     """
     Wraps a string with ANSI control codes to enable basic terminal-based

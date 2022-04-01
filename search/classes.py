@@ -30,7 +30,6 @@ class Nodes:
         # stores the cost of a given location
         self.cost_so_far: Dict[Tuple, float] = dict()
 
-
 # board class, contains size, starting node, goal node, and the existing 'blocking' nodes
 class Board:
     def __init__(self, data):

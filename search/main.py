@@ -34,5 +34,3 @@ def main():
     pathfinding(board)
     # closing file
     file.close()
-
-
