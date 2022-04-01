@@ -25,7 +25,6 @@ def main():
     except IndexError:
         print("usage: python3 -m search path/to/input.json", file=sys.stderr)
         sys.exit(1)
-    
 
     ############################################################################################
     # creating board object with 
