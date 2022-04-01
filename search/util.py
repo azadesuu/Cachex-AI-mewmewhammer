@@ -191,7 +191,7 @@ def generated_adj_nodes(current: tuple):
                 adj_nodes.append(tuple(node)) # converting to tuple to use as dictionary key
     return adj_nodes
 
-
+# adapted from https://www.redblobgames.com/pathfinding/a-star/implementation.html
 def pathfinding(board: Board):
     # orders the valid adjacent nodes by priority
     priority_queue = PriorityQueue()
