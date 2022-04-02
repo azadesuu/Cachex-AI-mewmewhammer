@@ -68,6 +68,13 @@ class Board:
 
         self.nodes = Nodes() 
         self.goal_path = list()
+        self.board = dict()
+        for node in self.blocks:
+            self.board[node] = "b"
+        self.board[self.start] = "S"
+        self.board[self.goal] = "G"
+
+
 
     def __str__(self):
         string = ''

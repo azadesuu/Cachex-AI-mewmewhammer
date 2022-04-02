@@ -154,11 +154,14 @@ def print_board(n, board_dict, message="", ansi=False, **kwargs):
 
 # heuristics, the cost of from the current node to goal
 def distance_to_goal(current, goal):
-    x = ((current[0] - goal[0])**2)
-    y = ((current[1] - goal[1])**2)
-    distance = abs(math.sqrt(x+y))
+    a0,a1 = current[0],current[1]
+    b0,b1 = goal[0],goal[1]
 
-    return distance
+    x = b0-a0
+    y = b1-a1
+    
+    dist = (abs(x) + abs(x+y) + abs(y)) / 2
+    return dist
 
 #checks for nodes adjacent to the current node, and returns the valid ones
 def valid_adjacent_nodes(current:tuple, board: Board):
@@ -226,12 +229,12 @@ def pathfinding(board: Board):
         neighbours:List[Tuple] = valid_adjacent_nodes(current, board)
         for next_node in neighbours:
             #cost of next node to goal
-            new_cost:float = UNIT_COST + distance_to_goal(next_node, goal)
+            new_cost:float = board.nodes.cost_so_far[current]  + UNIT_COST
             # if the next node found is has no cost, or the new_cost is less than the current cost
             # record the new (lower) cost into the dictionary
             if next_node not in board.nodes.cost_so_far.keys() or new_cost < board.nodes.cost_so_far[next_node]:
-                board.nodes.cost_so_far[next_node ] = new_cost
-                priority:float = new_cost
+                board.nodes.cost_so_far[next_node] = new_cost
+                priority:float = new_cost + distance_to_goal(next_node, goal)
                 # placing node into the priority queue
                 priority_queue.put(next_node , priority)
                 board.nodes.came_from[next_node] = current
@@ -253,6 +256,8 @@ def find_print_path(board:Board):
     
     # last node retrieved will be the starting node
     board.goal_path.insert(0, curr_node)
+    for goal_path_node in board.goal_path:
+        board.board[goal_path_node] = 'n'
 
     # prints the goal path tuples
     print(board.__str__())

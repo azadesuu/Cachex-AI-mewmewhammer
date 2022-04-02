@@ -14,7 +14,7 @@ This script contains the entry point to the program (the code in
 `__main__.py` calls `main()`). Your solution starts here!
 """
 
-from util import pathfinding
+from util import pathfinding,print_board
 from classes import Board
 
 def main():
@@ -26,10 +26,14 @@ def main():
         print("usage: python3 -m search path/to/input.json", file=sys.stderr)
         sys.exit(1)
 
+
     ############################################################################################
     # creating board object with 
     board = Board(data)
+
     # finding and processing path with function
     pathfinding(board)
+    print_board(board.size, board.board)
+
     # closing file
     file.close()
