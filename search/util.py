@@ -153,6 +153,7 @@ def print_board(n, board_dict, message="", ansi=False, **kwargs):
     print(output, **kwargs)
 
 # heuristics, the cost of from the current node to goal
+# adapted from https://www.redblobgames.com/grids/hexagons/
 def distance_to_goal(current, goal):
     a0,a1 = current[0],current[1]
     b0,b1 = goal[0],goal[1]
