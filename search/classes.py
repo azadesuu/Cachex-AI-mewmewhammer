@@ -19,7 +19,7 @@ class PriorityQueue:
         heapq.heappush(self.elements, (priority, item))
     
     #pops the item nearest to the goal that is unvisited
-    def get(self) ->  T:
+    def get(self) -> T:
         return heapq.heappop(self.elements)[1]
 
 #stores information on the nodes in the board
@@ -58,8 +58,8 @@ class Board:
         for block_nodes in data["board"]:
             if (type(block_nodes) is list) and(len(block_nodes) == 3):
                 block_tuple = tuple(block_nodes[1:3])
-                x,y = block_tuple
-                if ((x<self.size) or (x>=0)) or ((y<self.size) or (y>=0)):
+                x, y = block_tuple
+                if ((x < self.size) or (x >= 0)) or ((y < self.size) or (y >= 0)):
                     self.blocks.append(block_tuple)
                     continue
                 exit("DataError in Board class: block_nodes (number error)")
