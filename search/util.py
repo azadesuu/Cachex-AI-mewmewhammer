@@ -207,10 +207,10 @@ def pathfinding(board: Board):
     
     # entering the first node
     priority_queue.put(start, 0)     
-    #initialising values for the starting nodes
+    # initialising values for the starting nodes
     board.nodes.came_from[start] = None
     board.nodes.cost_so_far[start] = 0
-    #initialising blocks
+    # initialising blocks
     for block in blocks:
         # the initial blocking nodes have no "origin node" nor cost
         board.nodes.came_from[block] = None
@@ -230,7 +230,7 @@ def pathfinding(board: Board):
         neighbours:List[Tuple] = valid_adjacent_nodes(current, board)
         for next_node in neighbours:
             #cost of next node to goal
-            new_cost:float = board.nodes.cost_so_far[current]  + UNIT_COST
+            new_cost:float = board.nodes.cost_so_far[current] + UNIT_COST
             # if the next node found is has no cost, or the new_cost is less than the current cost
             # record the new (lower) cost into the dictionary
             if next_node not in board.nodes.cost_so_far.keys() or new_cost < board.nodes.cost_so_far[next_node]:
@@ -258,7 +258,8 @@ def find_print_path(board:Board):
     # last node retrieved will be the starting node
     board.goal_path.insert(0, curr_node)
     for goal_path_node in board.goal_path:
-        board.board[goal_path_node] = 'n'
+        if not((goal_path_node == board.start) or (goal_path_node == board.goal)):
+            board.board[goal_path_node] = 'n'
 
     # prints the goal path tuples
     print(board.__str__())

@@ -12,7 +12,7 @@ class PriorityQueue:
     
     #checks if the queue is empty
     def empty(self) -> bool:
-        return not self.elements
+        return len(self.elements) <=0
     
     #puts items into the queue based on its priority
     def put(self, item: T, priority: float):
@@ -71,8 +71,8 @@ class Board:
         self.board = dict()
         for node in self.blocks:
             self.board[node] = "b"
-        self.board[self.start] = "S"
-        self.board[self.goal] = "G"
+        self.board[self.start] = "s"
+        self.board[self.goal] = "g"
 
 
 
