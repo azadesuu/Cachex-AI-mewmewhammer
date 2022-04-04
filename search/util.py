@@ -242,7 +242,7 @@ def pathfinding(board: Board):
 
     # if all possible nodes have been explored, and the goal has not been found
     if (not found):
-        print("Goal not found")
+        print("0")
         exit(-1)    
     else:
         # prints the whole path taken to get to the goal
