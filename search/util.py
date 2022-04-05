@@ -152,11 +152,11 @@ def print_board(n, board_dict, message="", ansi=False, **kwargs):
     # Print to terminal (with optional args forwarded)
     print(output, **kwargs)
 
-# heuristics, the cost of from the current node to goal
+# heuristics, the cost of from the current node to goal, using adapted Manhattan distance formula
 # adapted from https://www.redblobgames.com/grids/hexagons/
 def distance_to_goal(current, goal):
     a0,a1 = current[0],current[1]
-    b0,b1 = goal[0],goal[1]
+    b0,b1 = goal[0],goal[1]   
 
     x = b0-a0
     y = b1-a1
@@ -164,7 +164,7 @@ def distance_to_goal(current, goal):
     dist = (abs(x) + abs(x+y) + abs(y)) / 2
     return dist
 
-#checks for nodes adjacent to the current node, and returns the valid ones
+# checks for nodes adjacent to the current node, and returns the valid ones
 def valid_adjacent_nodes(current:tuple, board: Board):
     # generating all adjacent nodes
     adj_nodes = generated_adj_nodes(current)
@@ -195,12 +195,13 @@ def generated_adj_nodes(current: tuple):
                 adj_nodes.append(tuple(node)) # converting to tuple to use as dictionary key
     return adj_nodes
 
+# finds the shortest path to goal
 # adapted from https://www.redblobgames.com/pathfinding/a-star/implementation.html
 def pathfinding(board: Board):
     # orders the valid adjacent nodes by priority
+    # priority will be the "total distance to goal"
     priority_queue = PriorityQueue()
     ###################################INITIALISING DATA########################################
-    size = board.size
     blocks = board.blocks
     start = board.start
     goal = board.goal
@@ -216,6 +217,7 @@ def pathfinding(board: Board):
         board.nodes.came_from[block] = None
         board.nodes.cost_so_far[block]  = 0
     ############################################################################################
+    
     # start pathfinding
     found = False
     # stops only when there are no longer any nodes to explore
@@ -227,17 +229,17 @@ def pathfinding(board: Board):
             break
 
         # generating all adjacent nodes
-        neighbours:List[Tuple] = valid_adjacent_nodes(current, board)
-        for next_node in neighbours:
-            #cost of next node to goal
-            new_cost:float = board.nodes.cost_so_far[current] + UNIT_COST
+        valid_adj_nodes:List[Tuple] = valid_adjacent_nodes(current, board)
+        for next_node in valid_adj_nodes:
+            # cost of next node to goal
+            cost_to_goal:float = board.nodes.cost_so_far[current] + UNIT_COST
             # if the next node found is has no cost, or the new_cost is less than the current cost
             # record the new (lower) cost into the dictionary
-            if next_node not in board.nodes.cost_so_far.keys() or new_cost < board.nodes.cost_so_far[next_node]:
-                board.nodes.cost_so_far[next_node] = new_cost
-                priority:float = new_cost + distance_to_goal(next_node, goal)
+            if next_node not in board.nodes.cost_so_far.keys() or cost_to_goal < board.nodes.cost_so_far[next_node]:
+                board.nodes.cost_so_far[next_node] = cost_to_goal
+                total_cost:float = cost_to_goal + distance_to_goal(next_node, goal)
                 # placing node into the priority queue
-                priority_queue.put(next_node , priority)
+                priority_queue.put(next_node , total_cost)
                 board.nodes.came_from[next_node] = current
 
     # if all possible nodes have been explored, and the goal has not been found
@@ -245,7 +247,7 @@ def pathfinding(board: Board):
         print("0")
         exit(-1)    
     else:
-        # prints the whole path taken to get to the goal
+        # prints the goal path and its length
         find_print_path(board)
 
 def find_print_path(board:Board):
@@ -257,6 +259,7 @@ def find_print_path(board:Board):
     
     # last node retrieved will be the starting node
     board.goal_path.insert(0, curr_node)
+    # updating the board data
     for goal_path_node in board.goal_path:
         if not((goal_path_node == board.start) or (goal_path_node == board.goal)):
             board.board[goal_path_node] = 'n'

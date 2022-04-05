@@ -1,9 +1,3 @@
-import sys
-import json
-# If you want to separate your code into separate files, put them
-# inside the `search` directory (like this one and `util.py`) and
-# then import from them like this:
-
 """
 COMP30024 Artificial Intelligence, Semester 1, 2022
 Project Part A: Searching
@@ -13,7 +7,8 @@ Date Authored: 31/03/2022
 This script contains the entry point to the program (the code in
 `__main__.py` calls `main()`). Your solution starts here!
 """
-
+import sys
+import json
 from util import pathfinding,print_board
 from classes import Board
 
@@ -28,12 +23,11 @@ def main():
 
 
     ############################################################################################
-    # creating board object with 
+    # creating board object with json file input
     board = Board(data)
 
     # finding and processing path with function
     pathfinding(board)
-    print_board(board.size, board.board)
 
     # closing file
     file.close()
