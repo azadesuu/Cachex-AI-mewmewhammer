@@ -18,8 +18,8 @@ class PriorityQueue:
     def put(self, item: T, priority: float):
         heapq.heappush(self.elements, (priority, item))
     
-    # pops the item nearest to the goal that is unvisited
-    def get(self) ->  T:
+    #pops the item nearest to the goal that is unvisited
+    def get(self) -> T:
         return heapq.heappop(self.elements)[1]
 
 # stores information on the nodes in the board

@@ -155,13 +155,13 @@ def print_board(n, board_dict, message="", ansi=False, **kwargs):
 # heuristics, the cost of from the current node to goal, using adapted Manhattan distance formula
 # adapted from https://www.redblobgames.com/grids/hexagons/
 def distance_to_goal(current, goal):
-    a0,a1 = current[0],current[1]
-    b0,b1 = goal[0],goal[1]   
+    a0, a1 = current[0], current[1]
+    b0, b1 = goal[0], goal[1]
 
-    x = b0-a0
-    y = b1-a1
+    x = b0 - a0
+    y = b1 - a1
     
-    dist = (abs(x) + abs(x+y) + abs(y)) / 2
+    dist = (abs(x) + abs(x + y) + abs(y)) / 2
     return dist
 
 # checks for nodes adjacent to the current node, and returns the valid ones
@@ -190,8 +190,8 @@ def generated_adj_nodes(current: tuple):
                 continue
             else:
                 node = []
-                node.append(current[0]+x)
-                node.append(current[1]+y)
+                node.append(current[0] + x)
+                node.append(current[1] + y)
                 adj_nodes.append(tuple(node)) # converting to tuple to use as dictionary key
     return adj_nodes
 
@@ -215,7 +215,7 @@ def pathfinding(board: Board):
     for block in blocks:
         # the initial blocking nodes have no "origin node" nor cost
         board.nodes.came_from[block] = None
-        board.nodes.cost_so_far[block]  = 0
+        board.nodes.cost_so_far[block] = 0
     ############################################################################################
     
     # start pathfinding
