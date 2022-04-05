@@ -63,7 +63,7 @@ class Board:
         for block_nodes in data["board"]:
             if (type(block_nodes) is list) and(len(block_nodes) == 3):
                 block_tuple = tuple(block_nodes[1:3])
-                x,y = block_tuple
+                x, y = block_tuple
                 if ((x < self.size) or (x >= 0)) or ((y < self.size) or (y >= 0)):
                     self.blocks.append(block_tuple)
                     continue
@@ -78,7 +78,7 @@ class Board:
         self.board[self.start] = "s"
         self.board[self.goal] = "g"
 
-
+    # returns the board's goal path as a string
     def __str__(self):
         string = ''
         string += str(len(self.goal_path))
