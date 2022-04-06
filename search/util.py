@@ -231,13 +231,13 @@ def pathfinding(board: Board):
         # generating all adjacent nodes
         valid_adj_nodes:List[Tuple] = valid_adjacent_nodes(current, board)
         for next_node in valid_adj_nodes:
-            # cost of next node to goal
-            cost_to_goal:float = board.nodes.cost_so_far[current] + UNIT_COST
+            # cost to current's adjacent node
+            cost_to_node:float = board.nodes.cost_so_far[current] + UNIT_COST
             # if the next node found is has no cost, or the new_cost is less than the current cost
             # record the new (lower) cost into the dictionary
-            if next_node not in board.nodes.cost_so_far.keys() or cost_to_goal < board.nodes.cost_so_far[next_node]:
-                board.nodes.cost_so_far[next_node] = cost_to_goal
-                total_cost:float = cost_to_goal + distance_to_goal(next_node, goal)
+            if next_node not in board.nodes.cost_so_far.keys() or cost_to_node < board.nodes.cost_so_far[next_node]:
+                board.nodes.cost_so_far[next_node] = cost_to_node
+                total_cost:float = cost_to_node + distance_to_goal(next_node, goal)
                 # placing node into the priority queue
                 priority_queue.put(next_node , total_cost)
                 board.nodes.came_from[next_node] = current
