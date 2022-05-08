@@ -1,5 +1,51 @@
-
+from turtle import distance
+from referee import Board
+from numpy import zeros
 class Player:
+
+    def scoring_system(self):
+        board = self.board
+        # initialising
+        n = board.n
+        # board empty
+        if board._data == zeros((n, n), dtype=int):
+            # choose maximum value
+            # sets the value of each placement
+            board_score = {(v,k):0 for (v,k) in range(0, n)}
+            for i in range(0, n):
+                for j in range (0,n):
+                    if (i==0) and (j==5):
+                        # cannot be swapped
+                        board_score = 10
+                    if (i == j):    
+                        board_score[(i,j)] = 5
+                        # calculate distance
+                    elif (i == 0) or (j==0):
+                        board_score[(i,j)] = 5
+                    else:
+                        pass
+                        #calculate distance
+
+            
+            if (self.player == "red") and (n%2==1):
+                board_score[(n/2,n/2)] = -100
+            else:
+                board_score[(n/2,n/2)] = 10
+        # done initialising base scores
+        # check for captures
+        for i in [(0,1),(1,0),(1,1),(-1,0),(0,-1),(-1,-1)]:
+            break
+
+        # checking for 
+            
+            
+        
+        
+        # check if previous move threatens capture
+        # else continue greedy algorithm
+
+        return list()
+                    
     def __init__(self, player, n):
         """
         Called once at the beginning of a game to initialise this player.
@@ -9,15 +55,36 @@ class Player:
         play as Red, or the string "blue" if your player will play
         as Blue.
         """
-        # put your code here
+        
+        self.player = player
+        self.size = n
+        self.board = Board(n)
+        self.transposition_table = dict()
+         
+    
 
+        
     def action(self):
         """
         Called at the beginning of your turn. Based on the current state
         of the game, select an action to play.
         """
-        # put your code here
-    
+        # put your code here    
+        # game state read in?
+        
+        #count
+        if self.board.digest not in self.transposition_table.keys():
+            self.transposition_table[self.board.digest][0] +=1
+        else:
+            self.transposition_table[self.board.digest] = [0,[]]
+            self.transposition_table[self.board.digest][0] +=1
+            self.transposition_table[self.board.digest][1] = scoring_system()
+
+
+
+        action = ("PLACE", 0, 0)
+        return action
+
     def turn(self, player, action):
         """
         Called at the end of each player's turn to inform this player of 
@@ -31,3 +98,4 @@ class Player:
         """
         # put your code here
 
+    
