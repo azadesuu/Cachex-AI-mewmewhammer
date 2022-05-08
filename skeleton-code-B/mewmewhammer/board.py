@@ -158,3 +158,11 @@ class Board:
         """
         return [_ADD(coord, step) for step in _HEX_STEPS \
             if self.inside_bounds(_ADD(coord, step))]
+
+    def get_valid_locations(self):
+        valid_locations = []
+        for i in range(0, self.n):
+            for j in range (0, self.n):
+                if not self.is_occupied(tuple(i,j)):
+                    valid_locations.append((i,j))
+        return valid_locations
