@@ -2,7 +2,6 @@
 Provide a class to maintain the state of a Cachex game board, including
 some helper methods to assist in updating and searching the board.
 
-NOTE:
 This board representation is designed to be used internally by the referee
 for the purposes of validating actions and displaying the result of the game.
 Each player is expected to store its own internal representation of the board
@@ -11,7 +10,9 @@ don't assume this class is an "ideal" board representation for your own agent;
 you should think carefully about how to design your own data structures for 
 representing the state of a game, with respect to your chosen strategy. 
 """
-
+"""
+Code attributed from AI Project B referee module
+"""
 from queue import Queue
 from numpy import zeros, array, roll, vectorize
 
