@@ -3,6 +3,23 @@ from referee import Board
 from numpy import zeros
 class Player:
 
+    def __init__(self, player, n):
+        """
+        Called once at the beginning of a game to initialise this player.
+        Set up an internal representation of the game state.
+
+        The parameter player is the string "red" if your player will
+        play as Red, or the string "blue" if your player will play
+        as Blue.
+        """
+        
+        self.player = player
+        self.size = n
+        self.board = Board(n)
+        self.transposition_table = dict() #apparently bad for storage requirements
+         
+    
+    
     def scoring_system(self):
         board = self.board
         # initialising
@@ -44,25 +61,8 @@ class Player:
         # check if previous move threatens capture
         # else continue greedy algorithm
 
-        return list()
+        return []
                     
-    def __init__(self, player, n):
-        """
-        Called once at the beginning of a game to initialise this player.
-        Set up an internal representation of the game state.
-
-        The parameter player is the string "red" if your player will
-        play as Red, or the string "blue" if your player will play
-        as Blue.
-        """
-        
-        self.player = player
-        self.size = n
-        self.board = Board(n)
-        self.transposition_table = dict()
-         
-    
-
         
     def action(self):
         """
@@ -70,7 +70,6 @@ class Player:
         of the game, select an action to play.
         """
         # put your code here    
-        # game state read in?
         
         #count
         if self.board.digest not in self.transposition_table.keys():
@@ -78,9 +77,11 @@ class Player:
         else:
             self.transposition_table[self.board.digest] = [0,[]]
             self.transposition_table[self.board.digest][0] +=1
-            self.transposition_table[self.board.digest][1] = scoring_system()
+            self.transposition_table[self.board.digest][1] = self.scoring_system()
 
+        
 
+        self.board.get_empty()
 
         action = ("PLACE", 0, 0)
         return action
