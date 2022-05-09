@@ -1,9 +1,9 @@
-from search.classes import T
-import util
 import math
 from turtle import distance
 from mewmewhammer.board import Board
-from util import minimax
+from mewmewhammer.util import minimax
+from copy import deepcopy
+
 # Actions
 _ACTION_STEAL = "STEAL"
 _ACTION_PLACE = "PLACE"
@@ -37,9 +37,7 @@ class Player:
 
         self.last_coord = (-1,-1)
         self.enemy_last_coord = (-1,-1)
-        # self.transposition_table = dict() #apparently bad for storage requirements       
-    
-    
+        self.last_test = (-1,-1)  
     
     
     def action(self):
@@ -53,8 +51,15 @@ class Player:
         if self.player == "red":
             maximisingPlayer = True
 
-        coord, minimax_score, steal = minimax(self.board, 3, -math.inf, math.inf, maximisingPlayer)
+        b_copy = deepcopy(self.board)
+        result = minimax(b_copy, self, 3, -math.inf, math.inf, maximisingPlayer)
+        coord = result[0]
+        steal = result[1][1]
 
+        if (steal):
+            action = ("STEAL",)
+        else:
+            action = ("PLACE",coord[0], coord[1])
 
         return action
     
@@ -107,7 +112,6 @@ class Player:
             # This should never happen, but good to be defensive
             raise self._illegal_action(action, f"Action not handled.")
         self.last_action = action
-        player.last_action = action
         self.print_board()
 
    

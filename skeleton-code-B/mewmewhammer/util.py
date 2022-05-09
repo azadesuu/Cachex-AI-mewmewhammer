@@ -3,7 +3,7 @@ import random
 from numpy import zeros
 
 
-def eval(coord, player):
+def eval(b_copy, player, maximisingPlayer):
 
     # efficient
     # estimating utility
@@ -73,39 +73,43 @@ def eval(coord, player):
 
     # utility function (MAX)
     # red vs blue pieces (red-blue) (ONLY THIS)
-    board = player.board
+    board = b_copy
+    coord = player.last_test
     eval = 0
     min_distance = distance_to_goal(coord, player)
     steal = False
     if (player.player == "red"):
-        if (coord[math.floor(board.n/2)]==coord[math.floor(board.n/2)]) and (board.n%2 == 1):
+        if (coord[0] == coord[1]) and (coord[0] == math.floor(board.n/2)) and (board.n % 2 == 1):
             # odd number
-            return -math.inf
-            
-        eval += board.values().count("red") - board.values.count("blue")
+            return (-math.inf, None)
+        if (coord[0] == coord[1]):
+            eval+=1
+        print(board[(0,0)])
+        eval += board.count("red") - board.count("blue")
         # length of goal path (positive)
-        eval += len(board.connected_coords(coord, player))
+        eval += len(board.connected_coords(coord))
         # distance to either side
-        eval += player.n - min_distance
+        eval += board.n - min_distance
         # if (can_capture(coord)):
         #     eval += 2
 
     else:
-        if (player.count == 1 and player.last_action[1]!=player.last_action[2]):
+        if (player.count == 1 and player.last_action[1] != player.last_action[2]):
             eval -= 1
             player.count += 1
             steal = True
-        eval -= (board.values().count("blue") - board.values.count("red"))
-        eval -= len(board.connected_coords(coord, player))
+        if (coord[0] == coord[1]):
+            eval-=1
+        eval -= (board.count("blue") - board.count("red"))
+        eval -= len(board.connected_coords(coord))
         eval -= (player.n - min_distance)
         # if (can_capture(coord)):
         #     eval -= 2
 
-
     # transposition table for all moves (branching factor is big)
     # blue captured = (+ score)
     # red captured = (negative -score)
-    return eval, steal
+    return (eval, steal)
 # checks for nodes adjacent to the current node, and returns the valid ones
 
 
@@ -127,16 +131,16 @@ def valid_adjacent_nodes(current: tuple, player):
 
 def distance_to_goal(current, player):
     a0, a1 = current[0], current[1]
-    b0, b1 = 0; goals_1 = list(); goals_2 = list()
+    b0, b1 = 0, 0
+    goals_1 = list()
+    goals_2 = list()
     distances = list()
     if (player.player == "red"):
-        goals_1 = [(0, n) for n in range(0, player.n)]
-        goals_2 = [(player.n, n) for n in range(0, player.n)]
-        print(goals_1, goals_2)
+        goals_1 = [(0, n) for n in range(0, player.board.n)]
+        goals_2 = [(player.board.n-1, n) for n in range(0, player.board.n)]
     elif (player.player == "blue"):
         goals_1 = [(n, 0) for n in range(0, player.n)]
-        goals_2 = [(n, player.n) for n in range(0, player.n)]
-        print(goals_1, goals_2)
+        goals_2 = [(n, player.n-1) for n in range(0, player.n)]
 
     for b0, b1 in goals_1+goals_2:
         x = b0 - a0
@@ -179,70 +183,79 @@ def game_over(board, piece):
 
 
 def is_terminal_node(player):
-	return game_over(player.board, player.player) or len(player.board.get_valid_locations()) == 0
+    return game_over(player.board, player.player) or len(player.board.get_valid_locations()) == 0
 
 
-def minimax(player, depth, alpha, beta, maximizingPlayer):
-    board = player.board
-    valid_locations = board.get_valid_locations()
-    is_terminal = is_terminal_node(board)
+def minimax(b_copy, player, depth, alpha, beta, maximisingPlayer):
+    valid_locations = b_copy.get_valid_locations()
+    is_terminal = is_terminal_node(player)
+    steal = False
+    chosen_coord = None
     if depth == 0 or is_terminal:
-    	if game_over(player.board, player.player):
+        if game_over(player.board, player.player):
             if player.player == "red":
-                return (None, 100000000000000)
+                return (None, (100000000000000, None))
             elif player.player == "blue":
-                return (None, -10000000000000)
-            else: # Game is over, no more valid moves
-                return (None, 0)
-        else: # Depth is zero
-            return (None, eval(board, maximizingPlayer))
-    if maximizingPlayer:
+                return (None, (-10000000000000,None))
+            else:  # Game is over, no more valid moves
+                return (None, (0, None))
+        else:
+            # Depth is zero
+            return (None, eval(b_copy, player, maximisingPlayer))
+    if maximisingPlayer:
         value = -math.inf
         for coord in valid_locations:
-            b_copy = board.copy()
             b_copy[coord] = "red"
-            new_score,steal = minimax(b_copy, depth-1, alpha, beta, False)[1]
+            player.last_test = coord
+            result = minimax(b_copy, player, depth-1, alpha, beta, False)
+            print(result)
+            new_score = result[1][0]
+            steal = result[1][1]
             if new_score > value:
                 value = new_score
                 chosen_coord = coord
             alpha = max(alpha, value)
             if alpha >= beta:
                 break
-        return chosen_coord, value, steal
+        return (chosen_coord, (value, steal))
 
-    else: # Minimizing player
+    else:  # Minimizing player
         value = math.inf
         for coord in valid_locations:
-            b_copy = board.copy()
             b_copy[coord] = "blue"
-            new_score, steal = minimax(b_copy, depth-1, alpha, beta, True)[1]
+            player.last_test = coord
+            result = minimax(b_copy, player, depth-1, alpha, beta, True)
+            print(result)
+            new_score = result[1][0]
+            steal = result[1][1]
             if new_score < value:
                 value = new_score
                 chosen_coord = coord
             beta = min(beta, value)
             if alpha >= beta:
                 break
-        return chosen_coord, value, steal
+        return (chosen_coord, (value, steal))
 
 
 def place_piece(board, coord, piece):
     board[coord] = piece
 
+
 def can_capture(node_to_place, player):
     board = player.board
     adj_nodes = generated_adj_nodes(board[node_to_place])
-    
+
     # which enemy pieces get captured
     captured_boolean = False
     captured = list()
 
     if player == "red":
-        opp_player  = "blue"
+        opp_player = "blue"
 
     for node in adj_nodes:
         if board[node] == player:
-            next = 
-
+            # next =
+            pass
         elif board[node] == opp_player:
             first = adj_nodes[0]
             last = adj_nodes[-1]
@@ -272,6 +285,5 @@ def can_capture(node_to_place, player):
                                         captured.append(last)
                                         captured.append(first)
                 current = next
-
 
     return captured_boolean, [captured]

@@ -163,6 +163,14 @@ class Board:
         valid_locations = []
         for i in range(0, self.n):
             for j in range (0, self.n):
-                if not self.is_occupied(tuple(i,j)):
+                if not self.is_occupied((i,j)):
                     valid_locations.append((i,j))
         return valid_locations
+    
+    def count(self, token):
+        count = 0
+        for i in range(self.n):
+            for j in range(self.n):
+                if (self[(i,j)] == token):
+                    count +=1
+        return count
