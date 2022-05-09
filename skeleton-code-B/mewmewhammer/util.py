@@ -114,8 +114,7 @@ def distance_to_goal(current, player):
     a0, a1 = current[0], current[1]
     b0, b1
     if (player.player == "red"):
-        goals =
-        b0, b1 = goal[0], goal[1]
+        goals = 
 
     x = b0 - a0
     y = b1 - a1
@@ -138,19 +137,22 @@ def generated_adj_nodes(current: tuple):
                 adj_nodes.append(tuple(node)) # converting to tuple to use as dictionary key
     return adj_nodes
 
-# def game_over(board, piece):
-    
-#     if piece == "red":
-#         for i in range(board.n):
-#             if board[0, i] == piece and board[board.n, i] == piece:
-#                 return True
-#     elif piece == "blue":
-#         for i in range(board.n):
-#             if board[i, 0] == piece and board[i, board.n] == piece:
-#                 return True
+def game_over(board, piece):
+    if piece == "red":
+        for i in range(board.n):
+            if board[(0,i)] == piece and len(board.get_connected_coords((0,1))) >= board.n:
+                for j in range (board.n):
+                    if board[(board.n,j)] == piece:
+                        return True
+    elif piece == "blue":
+        for i in range(board.n):
+            if board[(i, 0)] == piece and len(board.get_connected_coords((i,0))) >= board.n:
+                for j in range (board.n):
+                    if board[(j, board.n)] == piece:
+                        return True
 
-def is_terminal_node(board):
-	return game_over(board, PLAYER_PIECE) or game_over(board, AI_PIECE) or len(board.get_valid_locations(board)) == 0
+def is_terminal_node(player):
+	return game_over(player.board, player.player) or len(player.board.get_valid_locations()) == 0
 
 def minimax(player, depth, alpha, beta):
     valid_locations = player.board.get_valid_locations
@@ -193,19 +195,6 @@ def minimax(player, depth, alpha, beta):
             if alpha >= beta:
                 break
         return node, value
-
-def pick_best_move(board, piece):
-
-	valid_locations = player.board.get_valid_locations(board)
-	best_score = -10000
-	best = random.choice(valid_locations)
-	for valid in valid_locations:
-		temp_board = board.copy()
-		place_piece(temp_board, valid, piece)
-		score = scoring_system(temp_board, piece)
-		if score > best_score:
-			best_score = score
-			best = valid
 
 	return best
 
