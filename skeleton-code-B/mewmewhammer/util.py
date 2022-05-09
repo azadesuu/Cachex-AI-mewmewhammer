@@ -82,15 +82,15 @@ def eval(coord, player):
         eval += len(board.connected_coords(coord, player))
         # distance to either side
         eval += player.n - min_distance
-        if (can_capture(coord)):
-            eval += 2
+        # if (can_capture(coord)):
+        #     eval += 2
 
     else:
         eval -= (board.values().count("blue") - board.values.count("red"))
         eval -= len(board.connected_coords(coord, player))
         eval -= (player.n - min_distance)
-        if (can_capture(coord)):
-            eval -= 2
+        # if (can_capture(coord)):
+        #     eval -= 2
 
 
     # transposition table for all moves (branching factor is big)
@@ -203,8 +203,7 @@ def minimax(player, depth, alpha, beta, maximizingPlayer):
 
     else: # Minimizing player
         value = math.inf
-        column = random.choice(valid_locations)
-        for col in valid_locations:
+        for coord in valid_locations:
             b_copy = board.copy()
             b_copy[coord] = "blue"
             new_score = minimax(b_copy, depth-1, alpha, beta, True)[1]
