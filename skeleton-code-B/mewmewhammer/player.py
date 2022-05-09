@@ -1,7 +1,9 @@
+from search.classes import T
 import util
+import math
 from turtle import distance
 from mewmewhammer.board import Board
-from numpy import zeros
+from util import minimax
 # Actions
 _ACTION_STEAL = "STEAL"
 _ACTION_PLACE = "PLACE"
@@ -28,13 +30,10 @@ class Player:
         self.player = player
         self.player_goal = _ROW if (player =="red") else _COL
 
-        self.goal_sorted_by_distance = []
-
         self.size = n
         self.board = Board(n)
-        self.count = 0;
-        self.goal_path = []
-        self.path_length = 0
+        self.count = 0
+        self.last_action = tuple()s
 
         self.last_coord = (-1,-1)
         self.enemy_last_coord = (-1,-1)
@@ -49,13 +48,13 @@ class Player:
         of the game, select an action to play.
         """
         
-        # put your code here    
-        action = tuple()
-        type = "defense"
-        
+        # put your code here 
+        maximisingPlayer = False
+        if self.player == "red":
+            maximisingPlayer = True
 
-        if (action[0] == "PLACE" and type == "defense"):
-            self.goal_path.add((action[1],action[2]))
+        coord, minimax_score, steal = minimax(self.board, 3, -math.inf, math.inf, maximisingPlayer)
+
 
         return action
     
@@ -107,7 +106,8 @@ class Player:
         else:
             # This should never happen, but good to be defensive
             raise self._illegal_action(action, f"Action not handled.")
-
+        self.last_action = action
+        player.last_action = action
         self.print_board()
 
    

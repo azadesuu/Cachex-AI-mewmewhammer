@@ -76,7 +76,12 @@ def eval(coord, player):
     board = player.board
     eval = 0
     min_distance = distance_to_goal(coord, player)
+    steal = False
     if (player.player == "red"):
+        if (coord[math.floor(board.n/2)]==coord[math.floor(board.n/2)]) and (board.n%2 == 1):
+            # odd number
+            return -math.inf
+            
         eval += board.values().count("red") - board.values.count("blue")
         # length of goal path (positive)
         eval += len(board.connected_coords(coord, player))
@@ -86,6 +91,10 @@ def eval(coord, player):
         #     eval += 2
 
     else:
+        if (player.count == 1 and player.last_action[1]!=player.last_action[2]):
+            eval -= 1
+            player.count += 1
+            steal = True
         eval -= (board.values().count("blue") - board.values.count("red"))
         eval -= len(board.connected_coords(coord, player))
         eval -= (player.n - min_distance)
@@ -96,7 +105,7 @@ def eval(coord, player):
     # transposition table for all moves (branching factor is big)
     # blue captured = (+ score)
     # red captured = (negative -score)
-    return
+    return eval, steal
 # checks for nodes adjacent to the current node, and returns the valid ones
 
 
@@ -192,28 +201,28 @@ def minimax(player, depth, alpha, beta, maximizingPlayer):
         for coord in valid_locations:
             b_copy = board.copy()
             b_copy[coord] = "red"
-            new_score = minimax(b_copy, depth-1, alpha, beta, False)[1]
+            new_score,steal = minimax(b_copy, depth-1, alpha, beta, False)[1]
             if new_score > value:
                 value = new_score
                 chosen_coord = coord
             alpha = max(alpha, value)
             if alpha >= beta:
                 break
-        return chosen_coord, value
+        return chosen_coord, value, steal
 
     else: # Minimizing player
         value = math.inf
         for coord in valid_locations:
             b_copy = board.copy()
             b_copy[coord] = "blue"
-            new_score = minimax(b_copy, depth-1, alpha, beta, True)[1]
+            new_score, steal = minimax(b_copy, depth-1, alpha, beta, True)[1]
             if new_score < value:
                 value = new_score
                 chosen_coord = coord
             beta = min(beta, value)
             if alpha >= beta:
                 break
-        return chosen_coord, value
+        return chosen_coord, value, steal
 
 
 def place_piece(board, coord, piece):
