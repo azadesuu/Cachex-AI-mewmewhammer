@@ -83,8 +83,7 @@ def eval(b_copy, player, maximisingPlayer):
             # odd number
             return (-math.inf, None)
         if (coord[0] == coord[1]):
-            eval+=1
-        print(board[(0,0)])
+            eval += 1
         eval += board.count("red") - board.count("blue")
         # length of goal path (positive)
         eval += len(board.connected_coords(coord))
@@ -94,15 +93,17 @@ def eval(b_copy, player, maximisingPlayer):
         #     eval += 2
 
     else:
-        if (player.count == 1 and player.last_action[1] != player.last_action[2]):
-            eval -= 1
-            player.count += 1
-            steal = True
+        if (player.count == 1):
+            red_coord = board.get_first_token("red")
+            if (red_coord[0] != red_coord[1]):
+                eval -= 1
+                player.count += 1
+                steal = True
         if (coord[0] == coord[1]):
             eval-=1
         eval -= (board.count("blue") - board.count("red"))
         eval -= len(board.connected_coords(coord))
-        eval -= (player.n - min_distance)
+        eval -= (player.board.n - min_distance)
         # if (can_capture(coord)):
         #     eval -= 2
 
@@ -135,12 +136,13 @@ def distance_to_goal(current, player):
     goals_1 = list()
     goals_2 = list()
     distances = list()
+    
     if (player.player == "red"):
         goals_1 = [(0, n) for n in range(0, player.board.n)]
         goals_2 = [(player.board.n-1, n) for n in range(0, player.board.n)]
     elif (player.player == "blue"):
-        goals_1 = [(n, 0) for n in range(0, player.n)]
-        goals_2 = [(n, player.n-1) for n in range(0, player.n)]
+        goals_1 = [(n, 0) for n in range(0, player.board.n)]
+        goals_2 = [(n, player.board.n-1) for n in range(0, player.board.n)]
 
     for b0, b1 in goals_1+goals_2:
         x = b0 - a0
@@ -170,15 +172,15 @@ def generated_adj_nodes(current: tuple):
 def game_over(board, piece):
     if piece == "red":
         for i in range(board.n):
-            if board[(0, i)] == piece and len(board.get_connected_coords((0, 1))) >= board.n:
+            if board[(0, i)] == piece and len(board.connected_coords((0, i))) >= board.n:
                 for j in range(board.n):
-                    if board[(board.n, j)] == piece:
+                    if board[(board.n-1, j)] == piece:
                         return True
     elif piece == "blue":
         for i in range(board.n):
-            if board[(i, 0)] == piece and len(board.get_connected_coords((i, 0))) >= board.n:
+            if board[(i, 0)] == piece and len(board.connected_coords((i, 0))) >= board.n:
                 for j in range(board.n):
-                    if board[(j, board.n)] == piece:
+                    if board[(j, board.n-1)] == piece:
                         return True
 
 
@@ -208,7 +210,6 @@ def minimax(b_copy, player, depth, alpha, beta, maximisingPlayer):
             b_copy[coord] = "red"
             player.last_test = coord
             result = minimax(b_copy, player, depth-1, alpha, beta, False)
-            print(result)
             new_score = result[1][0]
             steal = result[1][1]
             if new_score > value:
@@ -225,7 +226,6 @@ def minimax(b_copy, player, depth, alpha, beta, maximisingPlayer):
             b_copy[coord] = "blue"
             player.last_test = coord
             result = minimax(b_copy, player, depth-1, alpha, beta, True)
-            print(result)
             new_score = result[1][0]
             steal = result[1][1]
             if new_score < value:
