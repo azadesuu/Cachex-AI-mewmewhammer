@@ -32,7 +32,7 @@ class Player:
 
         self.size = n
         self.board = Board(n)
-        self.count = 0;
+        self.count = 0
         self.goal_path = []
         self.path_length = 0
 
