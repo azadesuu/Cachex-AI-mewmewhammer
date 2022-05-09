@@ -138,55 +138,124 @@ def generated_adj_nodes(current: tuple):
                 adj_nodes.append(tuple(node)) # converting to tuple to use as dictionary key
     return adj_nodes
 
-def can_capture(node_to_place, player):
-    board = player.board
+# def game_over(board, piece):
+    
+#     if piece == "red":
+#         for i in range(board.n):
+#             if board[0, i] == piece and board[board.n, i] == piece:
+#                 return True
+#     elif piece == "blue":
+#         for i in range(board.n):
+#             if board[i, 0] == piece and board[i, board.n] == piece:
+#                 return True
 
-    # which enemy pieces get captured
-    captured_boolean = False
-    captured = list()
-
-    return captured_boolean, [captured]
-
-
-
-def is_terminal_node(player):
-	return len(player.board.get_valid_locations()) == 0        
+def is_terminal_node(board):
+	return game_over(board, PLAYER_PIECE) or game_over(board, AI_PIECE) or len(board.get_valid_locations(board)) == 0
 
 def minimax(player, depth, alpha, beta):
     valid_locations = player.board.get_valid_locations
-    is_terminal = is_terminal_node(player)
+    board = player.board
+    is_terminal = is_terminal_node(board)
     if depth == 0 or is_terminal:
         if is_terminal:
             return (None, 0)
-        # depth = 0
-        return (None, scoring_system(player))
+        else: 
+            # depth = 0
+            return (None, player.scoring_system(player))
 
     # maximising player
     if player == "red":
         value = -math.inf
-        column = random.choice(valid_locations)
-        for col in valid_locations:
+        node = random.choice(valid_locations)
+        for valid in valid_locations:
+            b_copy = board.copy()
+            # place_piece(b_copy, valid, player)
             new_score = minimax(b_copy, depth-1, alpha, beta, False)[1]
             if new_score > value:
                 value = new_score
-                column = col
+                node = valid
             alpha = max(alpha, value)
             if alpha >= beta:
                 break
-        return column, value
+        return node, value
 
     else: # Minimizing player
-        value = math.inf
-        column = random.choice(valid_locations)
-        for col in valid_locations:
-            row = get_next_open_row(board, col)
+        value = -math.inf
+        node = random.choice(valid_locations)
+        for valid in valid_locations:
             b_copy = board.copy()
-            drop_piece(b_copy, row, col, PLAYER_PIECE)
+            # place_piece(b_copy, valid, player)
             new_score = minimax(b_copy, depth-1, alpha, beta, True)[1]
             if new_score < value:
                 value = new_score
-                column = col
+                node = valid
             beta = min(beta, value)
             if alpha >= beta:
                 break
-        return column, value
+        return node, value
+
+def pick_best_move(board, piece):
+
+	valid_locations = player.board.get_valid_locations(board)
+	best_score = -10000
+	best = random.choice(valid_locations)
+	for valid in valid_locations:
+		temp_board = board.copy()
+		place_piece(temp_board, valid, piece)
+		score = scoring_system(temp_board, piece)
+		if score > best_score:
+			best_score = score
+			best = valid
+
+	return best
+
+def place_piece(board, coord, piece):
+    board[coord] = piece
+
+def can_capture(node_to_place, player):
+    board = player.board
+    current = board[node_to_place]
+    adj_nodes = generated_adj_nodes(current)
+    
+    # which enemy pieces get captured
+    captured_boolean = False
+    captured = list()
+
+    # case 1
+    first = adj_nodes[0]
+    last = adj_nodes[-1]
+    current = adj_nodes[0]
+    for next in adj_nodes[1:]:
+        if next != last:
+            if current != player and next != player:
+                adj_first = generated_adj_nodes(current)
+                adj_sec = generated_adj_nodes(next)
+                for first_coord in adj_first:
+                    for sec_coord in adj_sec:
+                        if (first_coord == sec_coord) and (first_coord != node_to_place):
+                            if first_coord == player:
+                                captured_boolean = True
+                                captured.append(current)
+                                captured.append(next)
+        else:
+            if last != player and first != player:
+                adj_first = generated_adj_nodes(last)
+                adj_sec = generated_adj_nodes(first)
+                for first_coord in adj_first:
+                    for sec_coord in adj_sec:
+                        if (first_coord == sec_coord) and (first_coord != node_to_place):
+                            if first_coord == player:
+                                captured_boolean = True
+                                captured.append(last)
+                                captured.append(first)
+        current = next
+
+    # case 2
+
+
+
+    
+
+
+
+    return captured_boolean, [captured]
