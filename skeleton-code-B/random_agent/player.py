@@ -46,21 +46,9 @@ class Player:
         """
         
         # put your code here 
-        maximisingPlayer = False
-        if self.player == "red":
-            maximisingPlayer = True
-
-        b_copy = deepcopy(self.board)
-        result = minimax(b_copy, self, 3, -math.inf, math.inf, maximisingPlayer)
-        coord = result[0]
-        steal = result[1][1]
-
-        if (steal):
-            action = ("STEAL",)
-        else:
-            action = ("PLACE",coord[0], coord[1])
-
-        return action
+        coord = math.random.choice(self.board.get_valid_locations())
+        
+        return ("PLACE", coord[0], coord[1])
     
 
     def print_board(self):
