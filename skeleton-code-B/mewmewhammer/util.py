@@ -3,6 +3,7 @@ import random
 from numpy import zeros
 
 def scoring_system(player):
+    
     # efficient
     # estimating utility
     # estimate who is going to win
@@ -41,8 +42,7 @@ def scoring_system(player):
             #center pieces
             board_score[(n/2,n/2)] = 10
     # done initialising base scores   
-    """
-
+    
     ## checking for blue's move, if threatens capture or long
     if (player.enemy_last_coord != (-1,-1)):
         threaten_capture = can_capture(player.enemy_last_coord, player, "defense")
@@ -66,48 +66,34 @@ def scoring_system(player):
             coordinate = []; 
             coordinate[0]
             board_score[tuple(coordinate)]
-
-
-
-    ## update goal path (done in player)
-        ## add points
-    ## check the top valid locations for capture
+    # 
+    """
 
     ### utility function (MAX)
     # red vs blue pieces (red-blue) (ONLY THIS)
+    board = player.board
+    eval = 0
+    if (player.player == "red"):
+        eval += board.values().count("red") - board.values.count("blue")
+        # length of goal path (positive)
+        eval += len(player.goal_path)
+    else:
+        eval -= (board.values().count("blue") - board.values.count("red"))
+        eval += len(player.goal_path)
+    
     # distance to the either side
-    # length of goal path (positive)
+    if (player.board.connected_coords(player.last_coord) > player.max_path_length):
+        player.max_path_length = player.board.connected_coords(player.last_coord)
+    distance_to_goal(player.last_coord, player)
+
+
+
 
     
     # transposition table for all moves (branching factor is big)
-    
     # blue captured = (+ score)
     # red captured = (negative -score)
-    # 
-
-
-
-
-    
-        
-
-
-
-    ## checking for next step in goal path
-
-
-
-    # red will always start from 5,5
-    # blue will always start from 0,n n,n n,0 n,n unless can capture
-
-
-    valid_locations = player.board.get_valid_locations()
-        
-
-    # check if previous move threatens capture
-    # else continue greedy algorithm
-
-    return []
+    return 
 # checks for nodes adjacent to the current node, and returns the valid ones
 def valid_adjacent_nodes(current:tuple, player):
     board = player.board
@@ -123,9 +109,13 @@ def valid_adjacent_nodes(current:tuple, player):
                 valid_adj_nodes.append(tuple([x, y])) # converting to tuple to use as dictionary key
     return valid_adj_nodes
 
-def distance_to_goal(current, goal):
+def distance_to_goal(current, player):
+    goals = []
     a0, a1 = current[0], current[1]
-    b0, b1 = goal[0], goal[1]
+    b0, b1
+    if (player.player == "red"):
+        goals =
+        b0, b1 = goal[0], goal[1]
 
     x = b0 - a0
     y = b1 - a1

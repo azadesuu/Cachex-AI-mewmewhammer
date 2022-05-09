@@ -27,10 +27,14 @@ class Player:
         
         self.player = player
         self.player_goal = _ROW if (player =="red") else _COL
+
+        self.goal_sorted_by_distance = []
+
         self.size = n
         self.board = Board(n)
         self.count = 0;
         self.goal_path = []
+        self.path_length = 0
 
         self.last_coord = (-1,-1)
         self.enemy_last_coord = (-1,-1)
