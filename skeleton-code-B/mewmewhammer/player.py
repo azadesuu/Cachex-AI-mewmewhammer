@@ -33,7 +33,7 @@ class Player:
         self.size = n
         self.board = Board(n)
         self.count = 0
-        self.last_action = tuple()s
+        self.last_action = tuple()
 
         self.last_coord = (-1,-1)
         self.enemy_last_coord = (-1,-1)
