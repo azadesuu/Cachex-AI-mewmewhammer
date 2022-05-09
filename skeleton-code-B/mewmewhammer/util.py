@@ -168,7 +168,7 @@ def minimax(player, depth, alpha, beta):
         value = -math.inf
         node = random.choice(valid_locations)
         for valid in valid_locations:
-            b_copy = board.copy()
+            # b_copy = board.copy()
             # place_piece(b_copy, valid, player)
             new_score = minimax(b_copy, depth-1, alpha, beta, False)[1]
             if new_score > value:
@@ -183,7 +183,7 @@ def minimax(player, depth, alpha, beta):
         value = -math.inf
         node = random.choice(valid_locations)
         for valid in valid_locations:
-            b_copy = board.copy()
+            # b_copy = board.copy()
             # place_piece(b_copy, valid, player)
             new_score = minimax(b_copy, depth-1, alpha, beta, True)[1]
             if new_score < value:
@@ -214,48 +214,53 @@ def place_piece(board, coord, piece):
 
 def can_capture(node_to_place, player):
     board = player.board
-    current = board[node_to_place]
-    adj_nodes = generated_adj_nodes(current)
+    adj_nodes = generated_adj_nodes(board[node_to_place])
     
     # which enemy pieces get captured
     captured_boolean = False
     captured = list()
 
-    # case 1
-    first = adj_nodes[0]
-    last = adj_nodes[-1]
-    current = adj_nodes[0]
-    for next in adj_nodes[1:]:
-        if next != last:
-            if current != player and next != player:
-                adj_first = generated_adj_nodes(current)
-                adj_sec = generated_adj_nodes(next)
-                for first_coord in adj_first:
-                    for sec_coord in adj_sec:
-                        if (first_coord == sec_coord) and (first_coord != node_to_place):
-                            if first_coord == player:
-                                captured_boolean = True
-                                captured.append(current)
-                                captured.append(next)
-        else:
-            if last != player and first != player:
-                adj_first = generated_adj_nodes(last)
-                adj_sec = generated_adj_nodes(first)
-                for first_coord in adj_first:
-                    for sec_coord in adj_sec:
-                        if (first_coord == sec_coord) and (first_coord != node_to_place):
-                            if first_coord == player:
-                                captured_boolean = True
-                                captured.append(last)
-                                captured.append(first)
-        current = next
+    if player == "red":
+        opp_player  = "blue"
 
-    # case 2
+    for node in adj_nodes:
+        if board[node] == player:
+            next = 
 
 
 
-    
 
+
+
+        elif board[node] == opp_player:
+            first = adj_nodes[0]
+            last = adj_nodes[-1]
+            current = adj_nodes[0]
+            for next in adj_nodes[1:]:
+                if next != last:
+                    if current != player and next != player:
+                        adj_first = generated_adj_nodes(current)
+                        adj_sec = generated_adj_nodes(next)
+                        for first_coord in adj_first:
+                            for sec_coord in adj_sec:
+                                if (first_coord == sec_coord) and (first_coord != node_to_place):
+                                    if first_coord == player:
+                                        captured_boolean = True
+                                        captured.append(current)
+                                        captured.append(next)
+
+                else:
+                    if last != player and first != player:
+                        adj_first = generated_adj_nodes(last)
+                        adj_sec = generated_adj_nodes(first)
+                        for first_coord in adj_first:
+                            for sec_coord in adj_sec:
+                                if (first_coord == sec_coord) and (first_coord != node_to_place):
+                                    if first_coord == player:
+                                        captured_boolean = True
+                                        captured.append(last)
+                                        captured.append(first)
+                current = next
 
 
     return captured_boolean, [captured]
