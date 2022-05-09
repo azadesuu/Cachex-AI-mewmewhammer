@@ -49,17 +49,7 @@ class Player:
         coord = math.random.choice(self.board.get_valid_locations())
         
         return ("PLACE", coord[0], coord[1])
-    
-
-    def print_board(self):
-        node_list = []
-        count = 0
-        for i in reversed(range(0,self.board.n)):
-            node_list.append([])
-            for j in range(0, self.board.n):
-                node_list[count].append(self.board[(i,j)])
-            print(node_list[count])
-            count +=1
+        
 
 
     def turn(self, player, action):
