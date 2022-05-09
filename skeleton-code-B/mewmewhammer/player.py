@@ -5,6 +5,8 @@ from numpy import zeros
 # Actions
 _ACTION_STEAL = "STEAL"
 _ACTION_PLACE = "PLACE"
+_ROW = 0
+_COL = 1
 
 # Action type validators
 _ACTION_TYPES = set([
@@ -24,11 +26,14 @@ class Player:
         """
         
         self.player = player
+        self.player_goal = _ROW if (player =="red") else _COL
         self.size = n
         self.board = Board(n)
         self.count = 0;
+        self.goal_path = []
 
         self.last_coord = (-1,-1)
+        self.enemy_last_coord = (-1,-1)
         # self.transposition_table = dict() #apparently bad for storage requirements       
     
     
@@ -41,33 +46,12 @@ class Player:
         """
         
         # put your code here    
-        
-        # #count
-        # if self.board.digest not in self.transposition_table.keys():
-        #     self.transposition_table[self.board.digest][0] +=1
-        # else:
-        #     self.transposition_table[self.board.digest] = [0,[]]
-        #     self.transposition_table[self.board.digest][0] +=1
-        #     self.transposition_table[self.board.digest][1] = self.scoring_system()
+        action = tuple()
+        type = "defense"
         
 
-        # self.board.get_empty()
-
-        if (self.player == "red" and self.count == 0): 
-            action = ("PLACE", 1, 0)
-            self.count += 1
-        elif (self.player == "blue" and self.count == 0): 
-            action = ("PLACE",0,0)
-            self.count += 1
-        elif (self.player == "red" and self.count == 1): 
-            action = ("PLACE", 0, 1)
-            self.count += 1
-        elif (self.player == "blue" and self.count == 1): 
-            action = ("PLACE",1,1)
-            self.count += 1
-        else:
-            pass
-
+        if (action[0] == "PLACE" and type == "defense"):
+            self.goal_path.add((action[1],action[2]))
 
         return action
     
@@ -81,7 +65,6 @@ class Player:
                 node_list[count].append(self.board[(i,j)])
             print(node_list[count])
             count +=1
-
 
 
     def turn(self, player, action):
@@ -106,13 +89,17 @@ class Player:
         if atype == _ACTION_STEAL:
             # Apply STEAL action
             self.board.swap()
-            self.last_coord = (-1, -1)
+            self.last_coord = (self.enemy_last_coord[1], self.enemy_last_coord[0])
+            self.enemy_last_coord = (-1,-1)
 
         elif atype == _ACTION_PLACE:
             # Apply PLACE action
             coord = tuple(aargs)
             self.last_captures = self.board.place(player, coord)
-            self.last_coord = coord
+            if (player == self.player):
+                self.last_coord = coord
+            else:
+                self.enemy_last_coord = coord
         else:
             # This should never happen, but good to be defensive
             raise self._illegal_action(action, f"Action not handled.")
