@@ -163,7 +163,7 @@ class Board:
         valid_locations = []
         for i in range(0, self.n):
             for j in range (0, self.n):
-                if not self.is_occupied((i,j)):
+                if (self[(i,j)] == None):
                     valid_locations.append((i,j))
         return valid_locations
     
