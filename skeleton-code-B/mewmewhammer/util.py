@@ -252,38 +252,37 @@ def can_capture(node_to_place, player):
     if player == "red":
         opp_player = "blue"
 
-    for node in adj_nodes:
-        if board[node] == player:
-            # next =
-            pass
-        elif board[node] == opp_player:
-            first = adj_nodes[0]
-            last = adj_nodes[-1]
-            current = adj_nodes[0]
-            for next in adj_nodes[1:]:
-                if next != last:
-                    if current != player and next != player:
-                        adj_first = generated_adj_nodes(current)
-                        adj_sec = generated_adj_nodes(next)
-                        for first_coord in adj_first:
-                            for sec_coord in adj_sec:
-                                if (first_coord == sec_coord) and (first_coord != node_to_place):
-                                    if first_coord == player:
-                                        captured_boolean = True
-                                        captured.append(current)
-                                        captured.append(next)
+    first = adj_nodes[0]
+    last = adj_nodes[-1]
+    current = first
+    prev = last
+    for next in adj_nodes[1:]:
+        # reach last adjacent nodes, check first and last adjacent nodes
+        if next == last:
+            prev = current
+            current = next
+            next = first
+        # opposite capture
+        if board[current] == opp_player and board[next] == opp_player:
+            adj_current = generated_adj_nodes(current)
+            adj_next = generated_adj_nodes(next)
+            for node1 in adj_current:
+                for node2 in adj_next:
+                    if node1 != node_to_place and node2 != node_to_place:
+                        if node1 == node2:
+                            captured_boolean = True
+                            captured.append(current)
+                            captured.append(next)
 
-                else:
-                    if last != player and first != player:
-                        adj_first = generated_adj_nodes(last)
-                        adj_sec = generated_adj_nodes(first)
-                        for first_coord in adj_first:
-                            for sec_coord in adj_sec:
-                                if (first_coord == sec_coord) and (first_coord != node_to_place):
-                                    if first_coord == player:
-                                        captured_boolean = True
-                                        captured.append(last)
-                                        captured.append(first)
-                current = next
+        # side capture
+        elif board[prev] == opp_player and board[current] == player and board[next] == opp_player:
+            captured_boolean = True
+            captured.append(prev)
+            captured.append(next)
+        
+        prev = current
+        current = next
+        
+
 
     return captured_boolean, [captured]
