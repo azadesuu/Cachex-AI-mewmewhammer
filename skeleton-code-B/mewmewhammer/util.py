@@ -195,7 +195,9 @@ def can_capture(node_to_place, player):
 
     if player == "red":
         opp_player = "blue"
-
+    else:
+        opp_player = "red"
+        
     first = adj_nodes[0]
     last = adj_nodes[-1]
     current = first
