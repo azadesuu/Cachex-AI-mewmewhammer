@@ -1,3 +1,4 @@
+from copy import deepcopy
 import math
 import random
 from numpy import zeros
@@ -8,68 +9,6 @@ def eval(b_copy, player, maximisingPlayer):
     # efficient
     # estimating utility
     # estimate who is going to win
-    """
-    board = player.board
-    ### initialising##
-    n = board.n
-    # board empty
-    if board._data == zeros((n, n), dtype=int):
-        # choose maximum value
-        # sets the value of each placement
-        board_score = {(v,k):0 for (v,k) in range(0, n)}
-        for i in range(0, n):
-            for j in range (0,n):
-                if (i==0) and (j==5):
-                    # cannot be swapped
-                    board_score = 10
-                if (i == j):
-                    board_score[(i,j)] = 5
-                    # calculate distance
-                elif (i == 0) or (j==0):
-                    board_score[(i,j)] = 5
-                else:
-                    pass
-                    # calculate distance
-
-        if (player.player == "red") and (n%2==1):
-            board_score[(n/2,n/2)] = -100
-        elif (player.player == "red"):
-            board_score[(player.board.n, player.board.n)] = 100
-        elif (player.player == "blue"):
-            red_coord = player.last_coord
-            if (red_coord[0]!= red_coord[1]  and player.count == 1):
-                board_score[(red_coord[1],red_coord[0])] = "STEAL"
-        else:
-            # center pieces
-            board_score[(n/2,n/2)] = 10
-    # done initialising base scores
-
-    # checking for blue's move, if threatens capture or long
-    if (player.enemy_last_coord != (-1,-1)):
-        threaten_capture = can_capture(
-            player.enemy_last_coord, player, "defense")
-
-
-        # defend, update score board to prioritise defense
-        enemy_list = player.board.connected_coords(player.enemy_last_coord)
-        index_list = list(); index_list.append([]); index_list.append([])
-        for node in enemy_list:
-            index_list[0].append(node[player.player_goal])
-            index_list[0].append(node[1-player.player_goal])
-
-        if (max(index_list) - min(index_list)) <= math.floor(n/2):
-            pass
-            # threaten capture middle if possible, else just threaten capture the ends
-            # check if any nodes capturable using function
-        elif (max(index_list.count(index_list[0]))==n-1):
-            # erecting barrier
-            # looks for the empty spot in the barricade
-            coord_list = list(set([i in range(0,n)])^set(index_list))
-            coordinate = [];
-            coordinate[0]
-            board_score[tuple(coordinate)]
-    #
-    """
 
     # utility function (MAX)
     # red vs blue pieces (red-blue) (ONLY THIS)
@@ -78,7 +17,7 @@ def eval(b_copy, player, maximisingPlayer):
     eval = 0
     min_distance = distance_to_goal(coord, player)
     steal = False
-    if (player.player == "red"):
+    if (maximisingPlayer):
         if (coord[0] == coord[1]) and (coord[0] == math.floor(board.n/2)) and (board.n % 2 == 1):
             # odd number
             return (-math.inf, None)
@@ -86,9 +25,9 @@ def eval(b_copy, player, maximisingPlayer):
             eval += 1
         eval += board.count("red") - board.count("blue")
         # length of goal path (positive)
-        eval += len(board.connected_coords(coord))
+        eval += len(set([x for x,y in board.connected_coords(coord)]))
+        
         # distance to either side
-        eval += board.n - min_distance
         # if (can_capture(coord)):
         #     eval += 2
 
@@ -102,8 +41,7 @@ def eval(b_copy, player, maximisingPlayer):
         if (coord[0] == coord[1]):
             eval-=1
         eval -= (board.count("blue") - board.count("red"))
-        eval -= len(board.connected_coords(coord))
-        eval -= (player.board.n - min_distance)
+        eval -= len(set([x for x,y in board.connected_coords(coord)]))
         # if (can_capture(coord)):
         #     eval -= 2
 
@@ -188,8 +126,8 @@ def is_terminal_node(player):
     return game_over(player.board, player.player) or len(player.board.get_valid_locations()) == 0
 
 
-def minimax(b_copy, player, depth, alpha, beta, maximisingPlayer):
-    valid_locations = b_copy.get_valid_locations()
+def minimax(board, player, depth, alpha, beta, maximisingPlayer):
+    valid_locations = board.get_valid_locations()
     is_terminal = is_terminal_node(player)
     steal = False
     chosen_coord = None
@@ -203,10 +141,11 @@ def minimax(b_copy, player, depth, alpha, beta, maximisingPlayer):
                 return (None, (0, None))
         else:
             # Depth is zero
-            return (None, eval(b_copy, player, maximisingPlayer))
+            return (None, eval(board, player, maximisingPlayer))
     if maximisingPlayer:
         value = -math.inf
         for coord in valid_locations:
+            b_copy = deepcopy(board)
             b_copy[coord] = "red"
             player.last_test = coord
             result = minimax(b_copy, player, depth-1, alpha, beta, False)
@@ -216,6 +155,8 @@ def minimax(b_copy, player, depth, alpha, beta, maximisingPlayer):
                 value = new_score
                 chosen_coord = coord
             alpha = max(alpha, value)
+
+            # a-b pruning
             if alpha >= beta:
                 break
         return (chosen_coord, (value, steal))
@@ -223,6 +164,7 @@ def minimax(b_copy, player, depth, alpha, beta, maximisingPlayer):
     else:  # Minimizing player
         value = math.inf
         for coord in valid_locations:
+            b_copy = deepcopy(board)
             b_copy[coord] = "blue"
             player.last_test = coord
             result = minimax(b_copy, player, depth-1, alpha, beta, True)
@@ -232,6 +174,8 @@ def minimax(b_copy, player, depth, alpha, beta, maximisingPlayer):
                 value = new_score
                 chosen_coord = coord
             beta = min(beta, value)
+            # a-b pruning
+
             if alpha >= beta:
                 break
         return (chosen_coord, (value, steal))

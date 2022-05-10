@@ -33,6 +33,7 @@ class Player:
         self.size = n
         self.board = Board(n)
         self.count = 0
+        self.goal_path = []
 
         self.last_coord = (-1,-1)
         self.enemy_last_coord = (-1,-1)
@@ -46,12 +47,13 @@ class Player:
         """
         
         # put your code here 
+        print(self.board.get_valid_locations())
         maximisingPlayer = False
         if self.player == "red":
             maximisingPlayer = True
 
-        b_copy = deepcopy(self.board)
-        result = minimax(b_copy, self, 3, -math.inf, math.inf, maximisingPlayer)
+        result = minimax(self.board, self, 3, -math.inf, math.inf, maximisingPlayer)
+        print(result)
         coord = result[0]
         steal = result[1][1]
 
